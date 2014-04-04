@@ -79,7 +79,7 @@ public class ModelItemFactory {
     }
 
     public static WsdlProject makeWsdlProject() throws SoapUIException {
-        return new WsdlProject((WorkspaceImpl) WorkspaceFactory.getInstance().openWorkspace("testWorkSpace", new StringToStringMap()));
+        return new WsdlProject("file:///tmp/project.xml", (WorkspaceImpl) WorkspaceFactory.getInstance().openWorkspace("testWorkSpace", new StringToStringMap()));
     }
 
     public static WsdlTestCase makeTestCase() throws SoapUIException {
@@ -111,6 +111,10 @@ public class ModelItemFactory {
 
     public static RestMockService makeRestMockService() throws SoapUIException {
         WsdlProject project = makeWsdlProject();
+        return makeRestMockService(project);
+    }
+
+    public static RestMockService makeRestMockService(WsdlProject project) {
         RESTMockServiceConfig restMockServiceConfig = project.getConfig().addNewRestMockService();
         restMockServiceConfig.setName("mockServiceConfig");
         RestMockService restMockService = new RestMockService(project, restMockServiceConfig);
