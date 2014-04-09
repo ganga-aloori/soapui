@@ -24,7 +24,6 @@ import com.eviware.soapui.impl.wsdl.mock.WsdlMockRunner;
 import com.eviware.soapui.impl.wsdl.mock.WsdlMockService;
 import com.eviware.soapui.impl.wsdl.support.ExternalDependency;
 import com.eviware.soapui.impl.wsdl.support.IconAnimator;
-import com.eviware.soapui.impl.wsdl.support.MockServiceExternalDependency;
 import com.eviware.soapui.impl.wsdl.testcase.WsdlTestRunContext;
 import com.eviware.soapui.impl.wsdl.teststeps.BeanPathPropertySupport;
 import com.eviware.soapui.model.ModelItem;
@@ -45,7 +44,6 @@ import java.net.UnknownHostException;
 import java.util.*;
 
 public abstract class AbstractMockService<MockOperationType extends MockOperation,
-        MockResponseType extends MockResponse,
         MockServiceConfigType extends BaseMockServiceConfig>
         extends AbstractTestPropertyHolderWsdlModelItem<MockServiceConfigType>
         implements MockService, HasHelpUrl {
@@ -180,6 +178,7 @@ public abstract class AbstractMockService<MockOperationType extends MockOperatio
         return getProtocol() + host + ":" + getPort() + getPath();
     }
 
+    @Override
     public String getHost() {
         return getConfig().getHost();
     }
@@ -188,12 +187,14 @@ public abstract class AbstractMockService<MockOperationType extends MockOperatio
         getConfig().setHost(host);
     }
 
+    @Override
     public void setPort(int port) {
         int oldPort = getPort();
         getConfig().setPort(port);
         notifyPropertyChanged(PORT_PROPERTY, oldPort, port);
     }
 
+    @Override
     public void setPath(String path) {
         String oldPath = getPath();
         getConfig().setPath(path);
@@ -213,6 +214,7 @@ public abstract class AbstractMockService<MockOperationType extends MockOperatio
     }
 
 
+    @Override
     public boolean getBindToHostOnly() {
         return getConfig().getBindToHostOnly();
     }
@@ -252,6 +254,7 @@ public abstract class AbstractMockService<MockOperationType extends MockOperatio
         mockServiceListeners.remove(listener);
     }
 
+    @Override
     public WsdlMockRunner getMockRunner() {
         return mockRunner;
     }
@@ -260,6 +263,7 @@ public abstract class AbstractMockService<MockOperationType extends MockOperatio
         this.mockRunner = mockRunner;
     }
 
+    @Override
     public MockRunListener[] getMockRunListeners() {
         return mockRunListeners.toArray(new MockRunListener[mockRunListeners.size()]);
     }
@@ -277,24 +281,28 @@ public abstract class AbstractMockService<MockOperationType extends MockOperatio
         return mockOperations;
     }
 
+    @Override
     public void fireMockOperationAdded(MockOperation mockOperation) {
         for (MockServiceListener listener : getMockServiceListeners()) {
             listener.mockOperationAdded(mockOperation);
         }
     }
 
+    @Override
     public void fireMockOperationRemoved(MockOperation mockOperation) {
         for (MockServiceListener listener : getMockServiceListeners()) {
             listener.mockOperationRemoved(mockOperation);
         }
     }
 
+    @Override
     public void fireMockResponseAdded(MockResponse mockResponse) {
         for (MockServiceListener listener : getMockServiceListeners()) {
             listener.mockResponseAdded(mockResponse);
         }
     }
 
+    @Override
     public void fireMockResponseRemoved(MockResponse mockResponse) {
         for (MockServiceListener listener : getMockServiceListeners()) {
             listener.mockResponseRemoved(mockResponse);
@@ -335,6 +343,7 @@ public abstract class AbstractMockService<MockOperationType extends MockOperatio
 
     }
 
+    @Override
     public void setStartScript(String script) {
         String oldScript = getStartScript();
 
@@ -351,10 +360,12 @@ public abstract class AbstractMockService<MockOperationType extends MockOperatio
         notifyPropertyChanged(START_SCRIPT_PROPERTY, oldScript, script);
     }
 
+    @Override
     public String getStartScript() {
         return getConfig().isSetStartScript() ? getConfig().getStartScript().getStringValue() : null;
     }
 
+    @Override
     public void setStopScript(String script) {
         String oldScript = getStopScript();
 
@@ -370,11 +381,13 @@ public abstract class AbstractMockService<MockOperationType extends MockOperatio
         notifyPropertyChanged(STOP_SCRIPT_PROPERTY, oldScript, script);
     }
 
+    @Override
     public String getStopScript() {
         return getConfig().isSetStopScript() ? getConfig().getStopScript().getStringValue() : null;
     }
 
-    public Object runStartScript(WsdlMockRunContext runContext, WsdlMockRunner runner) throws Exception {
+    @Override
+    public Object runStartScript(WsdlMockRunContext runContext, MockRunner runner) throws Exception {
         String script = getStartScript();
         if (StringUtils.isNullOrEmpty(script)) {
             return null;
@@ -391,7 +404,8 @@ public abstract class AbstractMockService<MockOperationType extends MockOperatio
         return startScriptEngine.run();
     }
 
-    public Object runStopScript(WsdlMockRunContext runContext, WsdlMockRunner runner) throws Exception {
+    @Override
+    public Object runStopScript(WsdlMockRunContext runContext, MockRunner runner) throws Exception {
         String script = getStopScript();
         if (StringUtils.isNullOrEmpty(script)) {
             return null;
@@ -408,6 +422,7 @@ public abstract class AbstractMockService<MockOperationType extends MockOperatio
         return stopScriptEngine.run();
     }
 
+    @Override
     public void setOnRequestScript(String script) {
         String oldScript = getOnRequestScript();
 
@@ -424,10 +439,12 @@ public abstract class AbstractMockService<MockOperationType extends MockOperatio
         notifyPropertyChanged("onRequestScript", oldScript, script);
     }
 
+    @Override
     public String getOnRequestScript() {
         return getConfig().isSetOnRequestScript() ? getConfig().getOnRequestScript().getStringValue() : null;
     }
 
+    @Override
     public void setAfterRequestScript(String script) {
         String oldScript = getAfterRequestScript();
 
@@ -443,12 +460,13 @@ public abstract class AbstractMockService<MockOperationType extends MockOperatio
         notifyPropertyChanged("afterRequestScript", oldScript, script);
     }
 
+    @Override
     public String getAfterRequestScript() {
         return getConfig().isSetAfterRequestScript() ? getConfig().getAfterRequestScript().getStringValue() : null;
     }
 
-    public Object runOnRequestScript(WsdlMockRunContext runContext, MockRequest mockRequest)
-            throws Exception {
+    @Override
+    public Object runOnRequestScript(WsdlMockRunContext runContext, MockRequest mockRequest) throws Exception {
         String script = getOnRequestScript();
         if (StringUtils.isNullOrEmpty(script)) {
             return null;
@@ -472,8 +490,8 @@ public abstract class AbstractMockService<MockOperationType extends MockOperatio
         }
     }
 
-    public Object runAfterRequestScript(WsdlMockRunContext runContext, MockResult mockResult)
-            throws Exception {
+    @Override
+    public Object runAfterRequestScript(WsdlMockRunContext runContext, MockResult mockResult) throws Exception {
         String script = getAfterRequestScript();
         if (StringUtils.isNullOrEmpty(script)) {
             return null;
@@ -530,8 +548,6 @@ public abstract class AbstractMockService<MockOperationType extends MockOperatio
 
     public abstract String getIconName();
 
-    public abstract MockDispatcher createDispatcher(WsdlMockRunContext mockContext);
-
     public void fireOnMockResult(Object result) {
         if (result != null && result instanceof MockResult) {
             for (MockRunListener listener : getMockRunListeners()) {
@@ -541,7 +557,7 @@ public abstract class AbstractMockService<MockOperationType extends MockOperatio
     }
 
     private class MockServiceIconAnimator
-            extends IconAnimator<AbstractMockService<MockOperationType, MockResponseType, MockServiceConfigType>>
+            extends IconAnimator<MockService>
             implements MockRunListener {
         public MockServiceIconAnimator() {
             super(AbstractMockService.this, getIconName(), getIconName(), 4);

@@ -264,7 +264,7 @@ public abstract class AbstractMockResponse<MockResponseConfigType extends BaseMo
         }
     }
 
-    protected String writeResponse(MockResult result, String responseContent) throws Exception {
+    public String writeResponse(MockResult result, String responseContent) throws Exception {
         MimeMultipart mp = null;
 
         Operation operation = getMockOperation().getOperation();
@@ -370,7 +370,9 @@ public abstract class AbstractMockResponse<MockResponseConfigType extends BaseMo
                 result.addHeader("Content-Encoding", responseCompression);
                 data = CompressionSupport.compress(responseCompression, data);
             }
-
+            if(result.getResponseHeaders().get("Transfer-Encoding") == null) {
+                result.addHeader("Content-Length", "" + data.length);
+            }
             result.writeRawResponseData(data);
         }
 
