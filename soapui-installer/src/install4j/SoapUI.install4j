@@ -815,7 +815,7 @@ else return false;
                         <object class="com.install4j.api.beans.ScriptProperty">
                           <void property="value">
                             <string>import java.io.File;
-com.install4j.runtime.installer.frontend.GUIHelper.setBrowserExecutable("firefox");
+com.install4j.runtime.installer.frontend.GUIHelper.setBrowserExecutable("xdg-open");
     return File.separator;
 
 </string>
